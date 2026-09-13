@@ -1,49 +1,26 @@
-# PHP specific
-*.php~
-*.php.bak
-*.php.swp
+```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
 
 # Dependencies
 vendor/
+composer.lock
 
 # Logs and temp files
 *.log
 *.tmp
-*.temp
-*.swp
-*.swo
 
 # Environment
 .env
 .env.local
-.env.*
+*.env.*
 
 # Editors
 .vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
 
-# OS
+# OS generated files
 .DS_Store
 Thumbs.db
-
-# Cache
-.cache/
-*.cache
-.phpunit.result.cache
-
-# Coverage
-coverage/
-htmlcov/
-.coverage
-
-# Build artifacts
-build/
-dist/
-*.phar
-
-# Testing
-.phpunit/
-.phpcs/
-.phpstan/
+```
