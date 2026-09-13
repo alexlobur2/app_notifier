@@ -17,14 +17,12 @@ final class AnDevice {
         ?DateTimeImmutable $lastSeenAt = null,
         ?int $requestCount = null,
     ): self {
-        $args = \func_get_args();
-        
         return new self(
-            applicationId: $args[0] !== null || \array_key_exists(0, $args) ? $applicationId : $this->applicationId,
-            deviceFpt: $args[1] !== null || \array_key_exists(1, $args) ? $deviceFpt : $this->deviceFpt,
-            firstSeenAt: $args[2] !== null || \array_key_exists(2, $args) ? $firstSeenAt : $this->firstSeenAt,
-            lastSeenAt: $args[3] !== null || \array_key_exists(3, $args) ? $lastSeenAt : $this->lastSeenAt,
-            requestCount: $args[4] !== null || \array_key_exists(4, $args) ? $requestCount : $this->requestCount,
+            applicationId: $applicationId ?? $this->applicationId,
+            deviceFpt: $deviceFpt ?? $this->deviceFpt,
+            firstSeenAt: $firstSeenAt ?? $this->firstSeenAt,
+            lastSeenAt: $lastSeenAt ?? $this->lastSeenAt,
+            requestCount: $requestCount ?? $this->requestCount,
         );
     }
 
