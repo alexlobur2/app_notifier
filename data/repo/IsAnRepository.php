@@ -1,9 +1,5 @@
 <?php
 
-namespace app_notifier\data\repo;
-
-use app_notifier\data\db\AnDb;
-
 /**
  *  Интерфейс репозитория
  */

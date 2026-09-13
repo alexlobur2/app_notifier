@@ -1,6 +1,5 @@
 <?php
 
-namespace app_notifier\core\http;
 /**
  *
  *  Структурирует запрос к АПИ сервера

@@ -1,7 +1,5 @@
 <?php
 
-namespace app_notifier\data\repo;
-
 /**
  *  Репозиторий Приложений
  */

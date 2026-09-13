@@ -1,7 +1,5 @@
 <?php
 
-namespace app_notifier\data\db;
-use LPDO;
 
 /**
  * Класс для работы с БД

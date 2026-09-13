@@ -1,6 +1,5 @@
 <?php
 
-namespace app_notifier\core\config;
 class AnConfig {
 
     const string DB_SERVER = "localhost";

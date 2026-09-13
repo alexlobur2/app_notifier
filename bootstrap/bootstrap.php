@@ -1,10 +1,5 @@
 <?php /** @noinspection PhpMultipleClassDeclarationsInspection */
 
-use app_notifier\core\config\AnConfig;
-use app_notifier\core\context\AnContext;
-use app_notifier\core\http\AnApiRequest;
-use app_notifier\data\db\AnDb;
-
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // отключение вывода ошибок
 
@@ -27,11 +22,6 @@ AnContext::instance()->init(
 
 // База данных
 AnDb::instance()->init(
-    db: new LPDO(
-        host:   AnConfig::DB_SERVER,
-        dbname: AnConfig::DB_NAME,
-        user:   AnConfig::DB_USER,
-        pass:   AnConfig::DB_PASS
-    )
+    db: LPDO::createFromArray( require_once(__DIR__."/../../../../etc/") )
 );
 

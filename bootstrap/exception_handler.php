@@ -1,8 +1,5 @@
 <?php
 
-use app_notifier\core\http\AnApiException;
-use app_notifier\core\http\AnApiResponse;
-
 /***********************************************************************************************************************
  *
  *  App Notifier: Обработка исключений

@@ -1,6 +1,5 @@
 <?php
 
-namespace app_notifier\core\http;
 /**
  *  Класс Исключений АПИ
  */

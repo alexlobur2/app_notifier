@@ -1,7 +1,5 @@
 <?php
 
-namespace app_notifier\core\http;
-
 /**
  * Класс для стандартизации ответа сервера
  *

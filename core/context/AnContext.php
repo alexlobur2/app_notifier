@@ -1,9 +1,5 @@
 <?php
 
-namespace app_notifier\core\context;
-
-use app_notifier\core\http\AnApiRequest;
-
 /**
  *  Текущий контекст
  */
