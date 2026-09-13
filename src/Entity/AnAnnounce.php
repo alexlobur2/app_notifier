@@ -26,16 +26,18 @@ final class AnAnnounce {
         ?DateTimeImmutable $createdAt = null,
         ?DateTimeImmutable $updatedAt = null,
     ): self {
+        $args = \func_get_args();
+        
         return new self(
-            uuid: $uuid ?? $this->uuid,
-            applicationId: $applicationId ?? $this->applicationId,
-            title: $title ?? $this->title,
-            body: $body ?? $this->body,
-            startAt: $startAt ?? $this->startAt,
-            endAt: $endAt ?? $this->endAt,
-            status: $status ?? $this->status,
-            createdAt: $createdAt ?? $this->createdAt,
-            updatedAt: $updatedAt ?? $this->updatedAt,
+            uuid: $args[0] !== null || \array_key_exists(0, $args) ? $uuid : $this->uuid,
+            applicationId: $args[1] !== null || \array_key_exists(1, $args) ? $applicationId : $this->applicationId,
+            title: $args[2] !== null || \array_key_exists(2, $args) ? $title : $this->title,
+            body: $args[3] !== null || \array_key_exists(3, $args) ? $body : $this->body,
+            startAt: $args[4] !== null || \array_key_exists(4, $args) ? $startAt : $this->startAt,
+            endAt: $args[5] !== null || \array_key_exists(5, $args) ? $endAt : $this->endAt,
+            status: $args[6] !== null || \array_key_exists(6, $args) ? $status : $this->status,
+            createdAt: $args[7] !== null || \array_key_exists(7, $args) ? $createdAt : $this->createdAt,
+            updatedAt: $args[8] !== null || \array_key_exists(8, $args) ? $updatedAt : $this->updatedAt,
         );
     }
 
