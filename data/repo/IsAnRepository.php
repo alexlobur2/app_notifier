@@ -27,5 +27,15 @@ abstract class IsAnRepository {
         }
     }
 
+
+    /**
+     *  Выдает дату в виде ISO строки
+     *  @param DateTimeInterface|null $date
+     *  @return string
+     */
+    protected function date2Iso(?DateTimeInterface $date): string {
+        return $date?->format('Y-m-d H:i:s');
+    }
+
 }
 

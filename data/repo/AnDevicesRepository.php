@@ -13,8 +13,8 @@ class AnDevicesRepository extends IsAnRepository {
     public function upsert(
         string $applicationId,
         string $deviceFpt,
-        string $firstSeenAt,
-        string $lastSeenAt,
+        DateTimeInterface $firstSeenAt,
+        DateTimeInterface $lastSeenAt,
         int $requestCount,
     ): bool {
         $sql = "INSERT INTO " . AnDb::TABLE_DEVICES . " 
@@ -26,11 +26,11 @@ class AnDevicesRepository extends IsAnRepository {
                     updated_at = NOW()";
 
         $count = $this->lpdo->execute($sql, [
-            ':application_id' => $applicationId,
-            ':device_fpt' => $deviceFpt,
-            ':first_seen_at' => $firstSeenAt,
-            ':last_seen_at' => $lastSeenAt,
-            ':request_count' => $requestCount,
+            ':application_id'   => $applicationId,
+            ':device_fpt'       => $deviceFpt,
+            ':first_seen_at'    => $this->date2Iso($firstSeenAt),
+            ':last_seen_at'     => $this->date2Iso($lastSeenAt),
+            ':request_count'    => $requestCount,
         ]);
         $this->throwOnDbError(); // кидаем исключение при ошибке БД
         return $count;

@@ -14,8 +14,8 @@ class AnAnnouncesRepository extends IsAnRepository {
         string $applicationId,
         string $title,
         string $body,
-        ?DateTimeImmutable $startAt,
-        ?DateTimeImmutable $endAt,
+        ?DateTimeInterface $startAt,
+        ?DateTimeInterface $endAt,
         int $status,
     ): bool {
         $sql = "INSERT INTO " . AnDb::TABLE_ANNOUNCES . " 
@@ -31,13 +31,13 @@ class AnAnnouncesRepository extends IsAnRepository {
                     updated_at = NOW()";
 
         return $this->db->db->execute($sql, [
-            ':uuid' => $uuid,
+            ':uuid'     => $uuid,
             ':application_id' => $applicationId,
-            ':title' => $title,
-            ':body' => $body,
-            ':start_at' => $startAt?->format('Y-m-d H:i:s'),
-            ':end_at' => $endAt?->format('Y-m-d H:i:s'),
-            ':status' => $status,
+            ':title'    => $title,
+            ':body'     => $body,
+            ':start_at' => $this->date2Iso($startAt),
+            ':end_at'   => $this->date2Iso($endAt),
+            ':status'   => $status,
         ]);
     }
 
