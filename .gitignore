@@ -3,3 +3,4 @@ Nothing should be ignored in this case, as the changes only include source code 
 dist/
 build/
 *.log
+node_modules/
