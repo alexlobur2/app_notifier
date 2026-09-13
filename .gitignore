@@ -1,9 +1,49 @@
-(notice: This is a template for output, not the actual output. The actual output should only contain the .gitignore content without any other text.)
+# PHP specific
+*.php~
+*.php.bak
+*.php.swp
 
-The provided file change list contains only a single PHP source file (`notifier_entities.php`) being added, with no build artifacts, dependency directories, temporary files, or other ignorable items present in the changes. Following rule #6, since the changes consist solely of source code files without any build artifacts or dependencies, no modifications to the .gitignore are needed.
+# Dependencies
+vendor/
 
-Therefore, the output is empty.node_modules/
-.next/
-dist/
-build/
+# Logs and temp files
 *.log
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*
+
+# Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+*.cache
+.phpunit.result.cache
+
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# Build artifacts
+build/
+dist/
+*.phar
+
+# Testing
+.phpunit/
+.phpcs/
+.phpstan/
