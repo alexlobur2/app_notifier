@@ -17,14 +17,12 @@ final class AnApp {
         ?DateTimeImmutable $createdAt = null,
         ?DateTimeImmutable $updatedAt = null,
     ): self {
-        $args = \func_get_args();
-        
         return new self(
-            applicationId: $args[0] !== null || \array_key_exists(0, $args) ? $applicationId : $this->applicationId,
-            token: $args[1] !== null || \array_key_exists(1, $args) ? $token : $this->token,
-            enabled: $args[2] !== null || \array_key_exists(2, $args) ? $enabled : $this->enabled,
-            createdAt: $args[3] !== null || \array_key_exists(3, $args) ? $createdAt : $this->createdAt,
-            updatedAt: $args[4] !== null || \array_key_exists(4, $args) ? $updatedAt : $this->updatedAt,
+            applicationId: $applicationId ?? $this->applicationId,
+            token: $token ?? $this->token,
+            enabled: $enabled ?? $this->enabled,
+            createdAt: $createdAt ?? $this->createdAt,
+            updatedAt: $updatedAt ?? $this->updatedAt,
         );
     }
 
