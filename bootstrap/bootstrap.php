@@ -5,7 +5,6 @@ ini_set('display_errors', 0); // отключение вывода ошибок
 
 require_once("exception_handler.php");
 require_once(__DIR__."/../domain/utils/utils.php");
-
 require_once(__DIR__."/../../../../libs/autoloader/AutoLoader.php");
 require_once(__DIR__."/../../../../libs/lpdo/LPDO.php");
 require_once(__DIR__."/../../../../core/config/CoreConfig.php");
@@ -22,6 +21,6 @@ AnContext::instance()->init(
 
 // База данных
 AnDb::instance()->init(
-    db: LPDO::createFromArray( require_once(__DIR__."/../../../../etc/") )
+    db: LPDO::createFromArray( require_once(__DIR__."/../../../../etc/notifier/db.php") )
 );
 
