@@ -1,24 +1,16 @@
 <?php
-
 declare(strict_types=1);
 
-namespace App\Notifier\Entity;
-
-use DateTimeImmutable;
-
-final class App
-{
+final class App {
     public function __construct(
         public readonly string $applicationId,
         public readonly string $token,
         public bool $enabled,
         public readonly DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt,
-    ) {
-    }
+    ){}
 
-    public static function create(string $applicationId, string $token): self
-    {
+    public static function create(string $applicationId, string $token): self {
         $now = new DateTimeImmutable();
         return new self(
             applicationId: $applicationId,
