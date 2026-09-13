@@ -1,53 +1,29 @@
 <?php
 declare(strict_types=1);
 
-final class App {
+final class AnApp {
     public function __construct(
         public readonly string $applicationId,
         public readonly string $token,
-        public bool $enabled,
+        public readonly bool $enabled,
         public readonly DateTimeImmutable $createdAt,
-        public DateTimeImmutable $updatedAt,
+        public readonly DateTimeImmutable $updatedAt,
     ){}
 
-    public static function create(string $applicationId, string $token): self {
-        $now = new DateTimeImmutable();
+    public function copyWith(
+        ?string $applicationId = null,
+        ?string $token = null,
+        ?bool $enabled = null,
+        ?DateTimeImmutable $createdAt = null,
+        ?DateTimeImmutable $updatedAt = null,
+    ): self {
         return new self(
-            applicationId: $applicationId,
-            token: $token,
-            enabled: true,
-            createdAt: $now,
-            updatedAt: $now,
+            applicationId: $applicationId ?? $this->applicationId,
+            token: $token ?? $this->token,
+            enabled: $enabled ?? $this->enabled,
+            createdAt: $createdAt ?? $this->createdAt,
+            updatedAt: $updatedAt ?? $this->updatedAt,
         );
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            applicationId: $data['application_id'],
-            token: $data['token'],
-            enabled: (bool) $data['enabled'],
-            createdAt: new DateTimeImmutable($data['created_at']),
-            updatedAt: new DateTimeImmutable($data['updated_at']),
-        );
-    }
-
-    public function disable(): void
-    {
-        if (!$this->enabled) {
-            return;
-        }
-        $this->enabled = false;
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
-    public function enable(): void
-    {
-        if ($this->enabled) {
-            return;
-        }
-        $this->enabled = true;
-        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function toArray(): array
@@ -59,5 +35,10 @@ final class App {
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt->format('Y-m-d H:i:s'),
         ];
+    }
+
+    public function toJson(): string
+    {
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 }
