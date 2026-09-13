@@ -41,76 +41,69 @@ class AnAnnouncesRepository extends IsAnRepository {
         ]);
     }
 
+
     /**
-     * Получение объявления по UUID
+     *  Получение объявления по UUID
+     *  @throws Exception
      */
     public function getByUuid(string $uuid): ?AnAnnounce {
-        $sql = "SELECT * FROM " . AnDb::TABLE_ANNOUNCES . " WHERE uuid = :uuid LIMIT 1";
-        
-        $row = $this->db->db->fetch($sql, [':uuid' => $uuid]);
-        
-        if (!$row) {
-            return null;
-        }
-
-        return new AnAnnounce(
-            uuid: $row['uuid'],
-            applicationId: $row['application_id'],
-            title: $row['title'],
-            body: $row['body'],
-            startAt: $row['start_at'] ? new DateTimeImmutable($row['start_at']) : null,
-            endAt: $row['end_at'] ? new DateTimeImmutable($row['end_at']) : null,
-            status: AnAnnounceStatus::from((int)$row['status']),
-            createdAt: new DateTimeImmutable($row['created_at']),
-            updatedAt: new DateTimeImmutable($row['updated_at']),
+        $row = $this->db->db->exec2row(
+            "SELECT * FROM " . AnDb::TABLE_ANNOUNCES . " WHERE uuid = :uuid LIMIT 1",
+            [ ':uuid' => $uuid ]
         );
+        return !$row ? null : $this->mapToAnAnnounce($row);
     }
 
+
     /**
-     * Получение списка объявлений
+     *  Получение списка объявлений
+     *  @throws Exception
      */
     public function getList(?string $applicationId = null, ?int $status = null, int $limit = 100, int $offset = 0): array {
+
+        // Начальные данные
         $conditions = [];
-        $params = [];
-
-        if ($applicationId !== null) {
-            $conditions[] = 'application_id = :application_id';
-            $params[':application_id'] = $applicationId;
-        }
-
-        if ($status !== null) {
-            $conditions[] = 'status = :status';
-            $params[':status'] = $status;
-        }
-
+        if ($applicationId !== null) $conditions[] = 'application_id = :application_id';
+        if ($status !== null) $conditions[] = 'status = :status';
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
         $sql = "SELECT * FROM " . AnDb::TABLE_ANNOUNCES . " 
-                {$whereClause}
-                ORDER BY created_at DESC
-                LIMIT :offset, :limit";
+            {$whereClause}
+            ORDER BY created_at DESC
+            LIMIT :offset, :limit";
 
-        $params[':offset'] = $offset;
-        $params[':limit'] = $limit;
+        $params = [
+            ':status' => $status,
+            ':application_id' => $applicationId,
+            ':offset' => $offset,
+            ':limit' => $limit
+        ];
 
-        $rows = $this->db->db->fetchAll($sql, $params);
+        // Получение данных из БД
+        $rows = $this->db->db->exec2array($sql, $params);
+        $this->throwOnDbError(); // кидаем исключение при ошибке
 
-        $result = [];
-        foreach ($rows as $row) {
-            $result[] = new AnAnnounce(
-                uuid: $row['uuid'],
-                applicationId: $row['application_id'],
-                title: $row['title'],
-                body: $row['body'],
-                startAt: $row['start_at'] ? new DateTimeImmutable($row['start_at']) : null,
-                endAt: $row['end_at'] ? new DateTimeImmutable($row['end_at']) : null,
-                status: AnAnnounceStatus::from((int)$row['status']),
-                createdAt: new DateTimeImmutable($row['created_at']),
-                updatedAt: new DateTimeImmutable($row['updated_at']),
-            );
-        }
+        // Формируем результат
+        return array_map( function($row){ return $this->mapToAnAnnounce($row); }, $rows );
+    }
 
-        return $result;
+
+    /**
+     *  Маппер
+     *  @throws DateMalformedStringException
+     */
+    private function mapToAnAnnounce(array $data): AnAnnounce {
+        return new AnAnnounce(
+            uuid:           $data['uuid'],
+            applicationId:  $data['application_id'],
+            title:          $data['title'],
+            body:           $data['body'],
+            startAt:        $data['start_at'] ? new DateTimeImmutable($data['start_at']) : null,
+            endAt:          $data['end_at'] ? new DateTimeImmutable($data['end_at']) : null,
+            status:         AnAnnounceStatus::from((int)$data['status']),
+            createdAt:      new DateTimeImmutable($data['created_at']),
+            updatedAt:      new DateTimeImmutable($data['updated_at']),
+        );
     }
 
 }

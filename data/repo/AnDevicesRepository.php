@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  *  Репозиторий Устройств
  */
@@ -7,12 +8,13 @@ class AnDevicesRepository extends IsAnRepository {
 
     /**
      * Вставка или обновление устройства
+     * @throws Exception
      */
     public function upsert(
         string $applicationId,
         string $deviceFpt,
-        DateTimeImmutable $firstSeenAt,
-        DateTimeImmutable $lastSeenAt,
+        string $firstSeenAt,
+        string $lastSeenAt,
         int $requestCount,
     ): bool {
         $sql = "INSERT INTO " . AnDb::TABLE_DEVICES . " 
@@ -23,27 +25,27 @@ class AnDevicesRepository extends IsAnRepository {
                     request_count = request_count + VALUES(request_count),
                     updated_at = NOW()";
 
-        return $this->db->db->execute($sql, [
+        $count = $this->lpdo->execute($sql, [
             ':application_id' => $applicationId,
             ':device_fpt' => $deviceFpt,
-            ':first_seen_at' => $firstSeenAt->format('Y-m-d H:i:s'),
-            ':last_seen_at' => $lastSeenAt->format('Y-m-d H:i:s'),
+            ':first_seen_at' => $firstSeenAt,
+            ':last_seen_at' => $lastSeenAt,
             ':request_count' => $requestCount,
         ]);
+        $this->throwOnDbError(); // кидаем исключение при ошибке БД
+        return $count;
     }
+
 
     /**
      * Получение списка устройств
+     * @throws Exception
      */
     public function getList(?string $applicationId = null, int $limit = 100, int $offset = 0): array {
+
+        // sql
         $conditions = [];
-        $params = [];
-
-        if ($applicationId !== null) {
-            $conditions[] = 'application_id = :application_id';
-            $params[':application_id'] = $applicationId;
-        }
-
+        if ($applicationId !== null) $conditions[] = 'application_id = :application_id';
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
         $sql = "SELECT * FROM " . AnDb::TABLE_DEVICES . " 
@@ -51,24 +53,33 @@ class AnDevicesRepository extends IsAnRepository {
                 ORDER BY last_seen_at DESC
                 LIMIT :offset, :limit";
 
-        $params[':offset'] = $offset;
-        $params[':limit'] = $limit;
+        $params = [
+            ':application_id' => $applicationId,
+            ':offset' => $offset,
+            ':limit' => $limit,
+        ];
 
-        $rows = $this->db->db->fetchAll($sql, $params);
+        // Запрос
+        $rows = $this->lpdo->exec2array($sql, $params);
+        $this->throwOnDbError(); // кидаем исключение при ошибке БД
 
-        $result = [];
-        foreach ($rows as $row) {
-            $result[] = new AnDevice(
-                applicationId: $row['application_id'],
-                deviceFpt: $row['device_fpt'],
-                firstSeenAt: new DateTimeImmutable($row['first_seen_at']),
-                lastSeenAt: new DateTimeImmutable($row['last_seen_at']),
-                requestCount: (int)$row['request_count'],
-            );
-        }
-
-        return $result;
+        return array_map([$this, 'mapToAnDevice'], $rows);
     }
+
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    private function mapToAnDevice(array $row): AnDevice {
+        return new AnDevice(
+            applicationId:  $row['application_id'],
+            deviceFpt:      $row['device_fpt'],
+            firstSeenAt:    new DateTimeImmutable($row['first_seen_at']),
+            lastSeenAt:     new DateTimeImmutable($row['last_seen_at']),
+            requestCount:   $row['request_count'],
+        );
+    }
+
 
 }
 

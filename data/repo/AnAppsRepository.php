@@ -7,12 +7,9 @@ class AnAppsRepository extends IsAnRepository {
 
     /**
      * Вставка или обновление приложения
+     * @throws Exception
      */
-    public function upsert(
-        string $applicationId,
-        string $token,
-        bool $enabled,
-    ): bool {
+    public function upsert( string $applicationId, string $token, bool $enabled ): bool {
         $sql = "INSERT INTO " . AnDb::TABLE_APPS . " 
                 (application_id, token, enabled, created_at, updated_at)
                 VALUES (:application_id, :token, :enabled, NOW(), NOW())
@@ -21,46 +18,39 @@ class AnAppsRepository extends IsAnRepository {
                     enabled = VALUES(enabled),
                     updated_at = NOW()";
 
-        return $this->db->db->execute($sql, [
+        $result = $this->lpdo->execute($sql, [
             ':application_id' => $applicationId,
             ':token' => $token,
             ':enabled' => $enabled ? 1 : 0,
         ]);
+        $this->throwOnDbError(); // исключение при ошибке
+        return $result;
     }
+
 
     /**
      * Получение приложения по токену
+     * @throws Exception
      */
     public function getByToken(string $token): ?AnApp {
-        $sql = "SELECT * FROM " . AnDb::TABLE_APPS . " WHERE token = :token LIMIT 1";
-        
-        $row = $this->db->db->fetch($sql, [':token' => $token]);
-        
-        if (!$row) {
-            return null;
-        }
-
-        return new AnApp(
-            applicationId: $row['application_id'],
-            token: $row['token'],
-            enabled: (bool)$row['enabled'],
-            createdAt: new DateTimeImmutable($row['created_at']),
-            updatedAt: new DateTimeImmutable($row['updated_at']),
+        $row = $this->lpdo->exec2val(
+            "SELECT * FROM " . AnDb::TABLE_APPS . " WHERE token = :token LIMIT 1",
+            [':token' => $token]
         );
+        $this->throwOnDbError(); // исключение при ошибке
+        return !$row ? null : $this->mapToAnApp($row);
     }
+
 
     /**
      * Получение списка приложений
+     * @throws Exception
      */
     public function getList(?bool $enabled = null, int $limit = 100, int $offset = 0): array {
+
+        // построение запроса
         $conditions = [];
-        $params = [];
-
-        if ($enabled !== null) {
-            $conditions[] = 'enabled = :enabled';
-            $params[':enabled'] = $enabled ? 1 : 0;
-        }
-
+        if ($enabled !== null) $conditions[] = 'enabled = :enabled';
         $whereClause = !empty($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
         $sql = "SELECT * FROM " . AnDb::TABLE_APPS . " 
@@ -68,23 +58,31 @@ class AnAppsRepository extends IsAnRepository {
                 ORDER BY created_at DESC
                 LIMIT :offset, :limit";
 
-        $params[':offset'] = $offset;
-        $params[':limit'] = $limit;
+        $params = [
+            ':enabled' => is_null($enabled) ? null : ($enabled ? 1 : 0),
+            ':offset' => $offset,
+            ':limit' => $limit,
+        ];
 
-        $rows = $this->db->db->fetchAll($sql, $params);
+        // запрос к БД
+        $rows = $this->lpdo->exec2array($sql, $params);
+        $this->throwOnDbError(); // исключение при ошибке
 
-        $result = [];
-        foreach ($rows as $row) {
-            $result[] = new AnApp(
-                applicationId: $row['application_id'],
-                token: $row['token'],
-                enabled: (bool)$row['enabled'],
-                createdAt: new DateTimeImmutable($row['created_at']),
-                updatedAt: new DateTimeImmutable($row['updated_at']),
-            );
-        }
+        return array_map( function ($row) { return $this->mapToAnApp($row); }, $rows);
+    }
 
-        return $result;
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    private function mapToAnApp(array $row): AnApp {
+        return new AnApp(
+            applicationId:  $row['application_id'],
+            token:          $row['token'],
+            enabled:        (bool)$row['enabled'],
+            createdAt:      new DateTimeImmutable($row['created_at']),
+            updatedAt:      new DateTimeImmutable($row['updated_at']),
+        );
     }
 
 }
