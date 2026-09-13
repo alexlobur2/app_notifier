@@ -1,25 +1,19 @@
 <?php
-
 declare(strict_types=1);
 
-namespace App\Notifier\Entity;
+final class AnAnnounce {
 
-use DateTimeImmutable;
-
-final class Announce
-{
     public function __construct(
         public readonly string $uuid,
         public readonly string $applicationId,
         public string $title,
         public string $body,
-        public ?DateTimeImmutable $startAt,
-        public ?DateTimeImmutable $endAt,
+        public ?DateTime $startAt,
+        public ?DateTime $endAt,
         public AnnounceStatus $status,
         public readonly DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt,
-    ) {
-    }
+    ){}
 
     public static function create(
         string $applicationId,
