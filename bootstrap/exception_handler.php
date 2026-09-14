@@ -1,5 +1,6 @@
 <?php
 
+
 /***********************************************************************************************************************
  *
  *  App Notifier: Обработка исключений
@@ -17,8 +18,8 @@ function exceptionHandler(?Throwable $err = null): void {
     }
 
     /* Любая другая ошибка */
+    AnUtils::logError($err?->getMessage(), $err?->getTraceAsString());
 
-    logError('Unhandled Exception', $err?->getMessage() ?? '', $err?->getTraceAsString());
     $requestData = ["post" => $_POST, "get" => $_GET, "files" => $_FILES];
 
     if($err==null){
@@ -58,17 +59,8 @@ function exceptionHandler(?Throwable $err = null): void {
 function errorHandler($errNo, $errStr, $errFile, $errLine): bool {
     $error = "Error:$errNo\n$errStr";
     $stackTrace = "#$errLine $errFile";
-    logError('Unhandled Error', $error, $stackTrace);
+    AnUtils::logError($error, $stackTrace);
     return true;
-}
-
-
-/**
- * Log
- */
-function logError(string $title, string $error, string $stackTrace): void {
-    $message = "$title: $error\nStack Trace:\n$stackTrace\n";
-    saveLog($message, "_error");
 }
 
 
