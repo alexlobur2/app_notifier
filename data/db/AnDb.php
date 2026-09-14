@@ -18,6 +18,7 @@ class AnDb {
     }
 
     function init(LPDO $db): self {
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // включение выбрасывание ошибок
         $this->db = $db;
         return $this;
     }

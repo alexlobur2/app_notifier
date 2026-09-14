@@ -32,7 +32,7 @@ class AnContext {
         $this->app = $app;
 
         // Является ли админом
-        $this->isAdmin = hash_equals(AnConfig::ADMIN_APP_ID, $this->app->applicationId);
+        $this->isAdmin = hash_equals(AnConfig::ADMIN_APP_ID, $this->app->appId);
 
         return self::$_instance;
     }

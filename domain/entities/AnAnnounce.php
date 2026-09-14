@@ -8,20 +8,56 @@ declare(strict_types=1);
 final readonly class AnAnnounce {
     public function __construct(
         public string             $uuid,
-        public string             $applicationId,
+        public string             $appId,
         public string             $title,
         public string             $body,
+        public AnAnnounceStatus   $status,
         public ?DateTimeImmutable $startAt,
         public ?DateTimeImmutable $endAt,
-        public AnAnnounceStatus   $status,
         public DateTimeImmutable  $createdAt,
         public DateTimeImmutable  $updatedAt,
     ) {}
 
 
+    /**
+     * @throws DateMalformedStringException
+     */
+    static function fromArray(array $data): AnAnnounce {
+        return new self(
+            $data['uuid'],
+            $data['app_id'],
+            $data['title'],
+            $data['body'],
+            AnAnnounceStatus::from($data['status']),
+            is_null($data['start_at']) ? null : DateTimeImmutable::createFromTimestamp($data['start_at']),
+            is_null($data['end_at']) ? null : DateTimeImmutable::createFromTimestamp($data['end_at']),
+            new DateTimeImmutable($data['created_at']),
+            new DateTimeImmutable($data['updated_at']),
+        );
+    }
+
+
+    /**
+     *  Представление в виде массива
+     */
+    function toArray(): array {
+        return [
+            "app_id" => $this->appId,
+            "uuid"           => $this->uuid,
+            "title"          => $this->title,
+            "body"           => $this->body,
+            "status"         => $this->status->value,
+            "start_at"       => $this->startAt->getTimestamp(),
+            "end_at"         => $this->endAt->getTimestamp(),
+            "created_at"     => $this->createdAt->getTimestamp(),
+            "updated_at"     => $this->updatedAt->getTimestamp(),
+        ];
+    }
+
+
     public function copyWith(
         ?string             $uuid = null,
-        ?string             $applicationId = null,
+        ?string             $appId = null,
         ?string             $title = null,
         ?string             $body = null,
         DateTimeImmutable|None|null     $startAt = new None(),
@@ -32,32 +68,16 @@ final readonly class AnAnnounce {
     ): self {
         return new self(
             $uuid ?? $this->uuid,
-            $applicationId ?? $this->applicationId,
+            $appId ?? $this->appId,
             $title ?? $this->title,
             $body ?? $this->body,
+            $status ?? $this->status,
             $startAt ?? $this->startAt,
             $endAt ?? $this->endAt,
-            $status ?? $this->status,
             $createdAt ?? $this->createdAt,
             $updatedAt ?? $this->updatedAt,
         );
     }
 
-    /**
-     *  Представление в виде DTO
-     */
-    public function  toDto(): array {
-        return [
-            'uuid' => $this->uuid,
-            'applicationId' => $this->applicationId,
-            'title' => $this->title,
-            'body' => $this->body,
-            'startAt'   => $this->startAt?->getTimestamp(),
-            'endAt'     => $this->endAt?->getTimestamp(),
-            'status'    => $this->status,
-            'createdAt' => $this->createdAt->getTimestamp(),
-            'updatedAt' => $this->updatedAt->getTimestamp(),
-        ];
-    }
 
 }

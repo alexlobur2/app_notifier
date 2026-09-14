@@ -4,7 +4,7 @@
 --
 CREATE TABLE `app_notifier_announces` (
   `uuid` char(16) NOT NULL,
-  `application_id` varchar(32) NOT NULL,
+  `app_id` varchar(32) NOT NULL,
   `title` varchar(255) NOT NULL,
   `body` text NOT NULL,
   `start_at` datetime DEFAULT NULL,
@@ -16,12 +16,12 @@ CREATE TABLE `app_notifier_announces` (
 
 ALTER TABLE `app_notifier_announces`
     ADD PRIMARY KEY (`uuid`),
-    ADD KEY `idx_app_status` (`application_id`,`status`);
+    ADD KEY `idx_app_status` (`app_id`,`status`);
 
 ALTER TABLE `app_notifier_announces`
     ADD CONSTRAINT `fk_app_notifier_announcements_app`
-        FOREIGN KEY (`application_id`)
-            REFERENCES `app_notifier_apps` (`application_id`)
+        FOREIGN KEY (`app_id`)
+            REFERENCES `app_notifier_apps` (`app_id`)
             ON DELETE CASCADE
             ON UPDATE CASCADE;
 
@@ -31,7 +31,7 @@ ALTER TABLE `app_notifier_announces`
 -- Структура таблицы `app_notifier_apps`
 --
 CREATE TABLE `app_notifier_apps` (
-  `application_id` varchar(32) NOT NULL,
+  `app_id` varchar(32) NOT NULL,
   `token` varchar(32) NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +39,7 @@ CREATE TABLE `app_notifier_apps` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `app_notifier_apps`
-    ADD PRIMARY KEY (`application_id`),
+    ADD PRIMARY KEY (`app_id`),
   ADD UNIQUE KEY `token` (`token`);
 
 
@@ -49,7 +49,7 @@ ALTER TABLE `app_notifier_apps`
 --
 
 CREATE TABLE `app_notifier_devices` (
-  `application_id` varchar(32) NOT NULL,
+  `app_id` varchar(32) NOT NULL,
   `device_fpt` varchar(64) NOT NULL,
   `first_seen_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_seen_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -58,12 +58,12 @@ CREATE TABLE `app_notifier_devices` (
 
 
 ALTER TABLE `app_notifier_devices`
-  ADD PRIMARY KEY (`application_id`,`device_fpt`);
+  ADD PRIMARY KEY (`app_id`,`device_fpt`);
 
 ALTER TABLE `app_notifier_devices`
   ADD CONSTRAINT `fk_app_notifier_devices_app`
-      FOREIGN KEY (`application_id`)
-          REFERENCES `app_notifier_apps` (`application_id`)
+      FOREIGN KEY (`app_id`)
+          REFERENCES `app_notifier_apps` (`app_id`)
           ON DELETE CASCADE
           ON UPDATE CASCADE;
 
