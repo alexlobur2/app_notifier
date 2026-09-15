@@ -2,9 +2,9 @@
 ### Base URL: http://localhost/api/index.php
 ### Все запросы отправляются методом POST с Content-Type: application/json
 
-@baseUrl = http://localhost/api/index.php
-@adminToken = admin_token_here
-@appToken = your_app_token_here
+@baseUrl = https://services.locode.me/app_notifier/api/index.php
+@adminToken = TEST_ADMIN
+@appToken = TEST_APP
 
 ### ============================================
 ### ПУБЛИЧНЫЕ ДЕЙСТВИЯ API
@@ -23,6 +23,7 @@ Content-Type: application/json
     "device_fpt": "device_fingerprint_12345"
   }
 }
+
 
 ### Get Announces - без параметров исключения
 POST {{baseUrl}}

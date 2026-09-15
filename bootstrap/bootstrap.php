@@ -19,13 +19,14 @@ AutoLoader::init(
     ]
 );
 
+// База данных
+AnDb::instance()->init(
+    db: LPDO::createFromArray( require_once(__DIR__."/../../../../etc/notifier/db.php") )
+);
+
 // Контекст
 AnContext::instance()->init(
     request: new AnApiRequest()
 );
 
-// База данных
-AnDb::instance()->init(
-    db: LPDO::createFromArray( require_once(__DIR__."/../../../../etc/notifier/db.php") )
-);
 

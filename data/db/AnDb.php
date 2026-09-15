@@ -9,9 +9,9 @@ class AnDb {
     public static function instance(): self { return self::$_instance ??= new self(); }
     private function __construct() {}
 
-    const string TABLE_APPS = "an_apps";
-    const string TABLE_DEVICES = "an_devices";
-    const string TABLE_ANNOUNCES = "an_announces";
+    const string TABLE_APPS = "apps";
+    const string TABLE_DEVICES = "devices";
+    const string TABLE_ANNOUNCES = "announces";
 
     public LPDO $db {
         get => $this->db;
