@@ -1,0 +1,252 @@
+### An API - HTTP Requests for PhpStorm
+### Base URL: http://localhost/api/index.php
+### Все запросы отправляются методом POST с Content-Type: application/json
+
+@baseUrl = http://localhost/api/index.php
+@adminToken = admin_token_here
+@appToken = your_app_token_here
+
+### ============================================
+### ПУБЛИЧНЫЕ ДЕЙСТВИЯ API
+### ============================================
+
+### Get Announces - Получение списка активных анонсов
+# Возвращает только анонсы со статусом "live"
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "get_announces",
+  "token": "{{appToken}}",
+  "data": {
+    "exclude_uuids": ["uuid1", "uuid2"],
+    "device_fpt": "device_fingerprint_12345"
+  }
+}
+
+### Get Announces - без параметров исключения
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "get_announces",
+  "token": "{{appToken}}",
+  "data": {
+    "device_fpt": "my_device_fingerprint"
+  }
+}
+
+### ============================================
+### АДМИН ДЕЙСТВИЯ - ANNOUNCES (АНОНСЫ)
+### ============================================
+
+### Adm Announces List - Список всех анонсов с пагинацией
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.list",
+  "token": "{{adminToken}}",
+  "data": {
+    "apps_ids": ["app1", "app2"],
+    "statuses": ["draft", "live", "archived"],
+    "pagination": {
+      "offset": 0,
+      "limit": 100,
+      "order": "created_at",
+      "desc": false
+    }
+  }
+}
+
+### Adm Announces List - без фильтрации (все анонсы)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.list",
+  "token": "{{adminToken}}",
+  "data": {}
+}
+
+### Adm Announces Upsert - Создание нового анонса
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.upsert",
+  "token": "{{adminToken}}",
+  "data": {
+    "announce": {
+      "app_id": "app123",
+      "title": "Заголовок анонса",
+      "body": "Текст анонса",
+      "status": "draft",
+      "start_at": 1735689600,
+      "end_at": 1738368000
+    }
+  }
+}
+
+### Adm Announces Upsert - Обновление существующего анонса
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.upsert",
+  "token": "{{adminToken}}",
+  "data": {
+    "announce": {
+      "uuid": "existing-uuid-here",
+      "app_id": "app123",
+      "title": "Обновленный заголовок",
+      "body": "Обновленный текст анонса",
+      "status": "live"
+    }
+  }
+}
+
+### Adm Announces Delete - Удаление анонсов по UUID
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.delete",
+  "token": "{{adminToken}}",
+  "data": {
+    "uuids": ["uuid1", "uuid2", "uuid3"]
+  }
+}
+
+### ============================================
+### АДМИН ДЕЙСТВИЯ - APPS (ПРИЛОЖЕНИЯ)
+### ============================================
+
+### Adm Apps List - Получить список всех приложений
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.apps.list",
+  "token": "{{adminToken}}",
+  "data": {}
+}
+
+### Adm Apps Upsert - Создание нового приложения
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.apps.upsert",
+  "token": "{{adminToken}}",
+  "data": {
+    "app": {
+      "app_id": "new_app_123",
+      "token": "custom_app_token_here",
+      "enabled": true
+    }
+  }
+}
+
+### Adm Apps Upsert - Обновление существующего приложения
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.apps.upsert",
+  "token": "{{adminToken}}",
+  "data": {
+    "app": {
+      "app_id": "existing_app_123",
+      "token": "updated_token_here",
+      "enabled": false
+    }
+  }
+}
+
+### Adm Apps Delete - Удаление приложений по ID
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.apps.delete",
+  "token": "{{adminToken}}",
+  "data": {
+    "apps_ids": ["app1", "app2", "app3"]
+  }
+}
+
+### ============================================
+### АДМИН ДЕЙСТВИЯ - DEVICES (УСТРОЙСТВА)
+### ============================================
+
+### Adm Devices List - Список устройств с пагинацией
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.devices.list",
+  "token": "{{adminToken}}",
+  "data": {
+    "apps_ids": ["app1", "app2"],
+    "pagination": {
+      "offset": 0,
+      "limit": 100,
+      "order": "last_seen_at",
+      "desc": true
+    }
+  }
+}
+
+### Adm Devices List - все устройства без фильтрации
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.devices.list",
+  "token": "{{adminToken}}",
+  "data": {}
+}
+
+### ============================================
+### ТЕСТОВЫЕ ЗАПРОСЫ С ОШИБКАМИ
+### ============================================
+
+### Неверный токен (ошибка 401 Unauthorized)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.apps.list",
+  "token": "invalid_token",
+  "data": {}
+}
+
+### Неизвестное действие (ошибка 400 Bad Request)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "unknown_action",
+  "token": "{{adminToken}}",
+  "data": {}
+}
+
+### Отсутствует поле action (ошибка 400 Bad Request)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "token": "{{adminToken}}",
+  "data": {}
+}
+
+### Недостаточно прав для админ действия (ошибка 403 Forbidden)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "adm.announces.list",
+  "token": "{{appToken}}",
+  "data": {}
+}
