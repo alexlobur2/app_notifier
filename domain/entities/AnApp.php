@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  *  Приложения
  */
-final readonly class AnApp {
+final readonly class AnApp extends IsAnEntity{
     public function __construct(
         public string            $appId,
         public string            $token,
@@ -20,8 +20,12 @@ final readonly class AnApp {
             $data['app_id'],
             $data['token'],
             (bool) $data['enabled'],
-            DateTimeImmutable::createFromTimestamp($data['created_at']),
-            DateTimeImmutable::createFromTimestamp($data['updated_at']),
+            array_key_exists('created_at', $data)
+                ? DateTimeImmutable::createFromTimestamp($data['created_at'])
+                : new DateTimeImmutable(),
+            array_key_exists('updated_at', $data)
+                ? DateTimeImmutable::createFromTimestamp($data['updated_at'])
+                : new DateTimeImmutable()
         );
     }
 

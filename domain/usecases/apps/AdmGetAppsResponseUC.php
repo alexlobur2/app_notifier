@@ -27,6 +27,7 @@ class AdmGetAppsResponseUC extends IsAdmAnResponseUC {
      * @throws Exception
      */
     public function execute(): AnApiResponse {
+
         $apps = $this->repo->getList();
 
         return new AnApiResponse(true, [

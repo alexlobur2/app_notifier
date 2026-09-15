@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  *  Устройства
  */
-final readonly class AnDevice {
+final readonly class AnDevice extends IsAnEntity{
     public function __construct(
         public string            $appId,
         public string            $deviceFpt,

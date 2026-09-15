@@ -21,7 +21,7 @@ class AnDevicesRepositoryOpts extends IsAnRepositoryOpts {
     public function where($prefix = ""): string {
         $appsIds = $this->prepareValue($this->appsIds);
         $conditions = [
-            !empty($appsIds) ? 'app_id IN ('.implode($appsIds).')' : null,
+            !empty($appsIds) ? 'app_id IN ('.implode(",",$appsIds).')' : null,
         ];
         $conditions = array_filter($conditions, fn($item) => !is_null($item));
         return !empty($conditions) ? $prefix.' '.implode(' AND ', $conditions) : '';

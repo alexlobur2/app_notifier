@@ -29,14 +29,19 @@ class GetAnnouncesResponseUC extends IsAnResponseUC {
      * @throws Exception
      */
     public function execute(): AnApiResponse {
+        // Проверка включено ли приложение
+        if(!$this->app->enabled){
+            throw new AnApiException(AnApiException::API_FORBIDDEN, "Application not enabled");
+        }
+
         // получение начальных данных
         $deviceFpt      = $this->data['device_fpt']??null;
-        $excludeUuids   = $this->assertData('exclude_uuids', 'array', true);
+        $excludeUuids   = $this->assertData('exclude_uuids', 'array', true)??[];
 
         // Обновляем данные об устройстве
-        if(!is_null($deviceFpt)){
-            new AdmTouchDeviceUC()->execute($this->app->appId, $deviceFpt);
-        }
+        $device = is_null($deviceFpt)
+            ? null
+            : new AdmTouchDeviceUC()->execute($this->app->appId, $deviceFpt);
 
         // Список анонсов
         $announces = $this->repo->getList(
@@ -50,6 +55,7 @@ class GetAnnouncesResponseUC extends IsAnResponseUC {
 
         return new AnApiResponse(true, [
             "announces" => AnDtoMapper::announcesToDto($announces),
+            "device" => $device
         ]);
 
     }

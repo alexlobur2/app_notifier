@@ -19,10 +19,12 @@
  */
 class AdmUpsertAnnounceResponseUC extends IsAdmAnResponseUC {
     private AnAnnouncesRepository $repo;
+    private AnAppsRepository $appsRepo;
 
     public function __construct() {
         parent::__construct();
         $this->repo = new AnAnnouncesRepository();
+        $this->appsRepo = new AnAppsRepository();
     }
 
     /**
@@ -33,14 +35,18 @@ class AdmUpsertAnnounceResponseUC extends IsAdmAnResponseUC {
         // Начальные данные
         $announceData = $this->assertData('announce', 'array');
 
-        // Если нет UUID - создадим новый
-        $announceData['uuid'] = $this->ensureUuid($announceData['uuid']);
-
         // Парсим через маппер
         try{
+            // Если нет UUID - создадим новый
+            $announceData['uuid'] = $this->ensureUuid($announceData['uuid']??null);
             $announce = AnDtoMapper::dtoToAnnounce($announceData);
         } catch (Exception $e) {
             throw new AnApiException(AnApiException::API_BAD_REQUEST, $e->getMessage());
+        }
+
+        // Проверка наличия приложения
+        if(is_null($this->appsRepo->getByAppId($announce->appId))){
+            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Application:".$announce->appId." not exist");
         }
 
         // Обновление данных

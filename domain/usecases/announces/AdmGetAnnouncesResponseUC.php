@@ -46,7 +46,7 @@ class AdmGetAnnouncesResponseUC extends IsAdmAnResponseUC {
         // Начальные данные
         $appsIds = $this->assertData('apps_ids', 'array', true) ?? [];
         $statuses = $this->assertData('statuses', 'array', true) ?? [];
-        $pagination = AnPagination::fromArray($this->data['pagination']);
+        $pagination = AnPagination::fromArray($this->data['pagination']??null);
 
         // Получение списка
         $opts = new AnAnnouncesRepositoryOpts(

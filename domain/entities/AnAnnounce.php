@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  *  Анонсы
  */
-final readonly class AnAnnounce {
+final readonly class AnAnnounce extends IsAnEntity{
     public function __construct(
         public string             $uuid,
         public string             $appId,
@@ -19,9 +19,6 @@ final readonly class AnAnnounce {
     ) {}
 
 
-    /**
-     * @throws DateMalformedStringException
-     */
     static function fromArray(array $data): AnAnnounce {
         return new self(
             $data['uuid'],
@@ -29,10 +26,10 @@ final readonly class AnAnnounce {
             $data['title'],
             $data['body'],
             AnAnnounceStatus::from($data['status']),
-            is_null($data['start_at']) ? null : DateTimeImmutable::createFromTimestamp($data['start_at']),
-            is_null($data['end_at']) ? null : DateTimeImmutable::createFromTimestamp($data['end_at']),
-            new DateTimeImmutable($data['created_at']),
-            new DateTimeImmutable($data['updated_at']),
+            !array_key_exists('start_at',$data) ? null : DateTimeImmutable::createFromTimestamp($data['start_at']),
+            !array_key_exists('end_at',$data) ? null : DateTimeImmutable::createFromTimestamp($data['end_at']),
+            !array_key_exists('created_at',$data) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['start_at']),
+            !array_key_exists('updated_at',$data) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['end_at']),
         );
     }
 
@@ -78,6 +75,5 @@ final readonly class AnAnnounce {
             $updatedAt ?? $this->updatedAt,
         );
     }
-
 
 }

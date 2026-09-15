@@ -30,6 +30,7 @@ readonly class AnApiRequest {
     function __construct() {
         // получение входных данных
         $input = file_get_contents('php://input');
+        AnUtils::log("Request\n".$input);
 
         // Проверка JSON
         $json = json_decode($input, true);

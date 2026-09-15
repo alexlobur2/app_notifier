@@ -11,15 +11,15 @@ class AnAnnouncesRepository extends IsAnRepository {
      */
     public function upsert(AnAnnounce $item): void {
         $sql = "INSERT INTO ".AnDb::TABLE_ANNOUNCES." 
-            (uuid, app_id, title, body, start_at, end_at, status, created_at, updated_at)
-            VALUES (:uuid, :app_id, :title, :body, :start_at, :end_at, :status, NOW(), NOW())
+            (uuid, app_id, title, body, status, start_at, end_at, created_at, updated_at)
+            VALUES (:uuid, :app_id, :title, :body, :status, :start_at, :end_at, NOW(), NOW())
             ON DUPLICATE KEY UPDATE
                 app_id = VALUES(app_id),
                 title = VALUES(title),
                 body = VALUES(body),
+                status = VALUES(status),
                 start_at = VALUES(start_at),
                 end_at = VALUES(end_at),
-                status = VALUES(status),
                 updated_at = NOW()";
 
         $this->lpdo->execute($sql, [
@@ -81,7 +81,7 @@ class AnAnnouncesRepository extends IsAnRepository {
      *  Удаление объявлений по UUID
      *  @throws Exception
      */
-    public function deleteByIds(array $uuids): int {
+    public function deleteByUuids(array $uuids): int {
         $placeholders = implode(',', array_fill(0, count($uuids), '?'));
         $sql = "DELETE FROM ".AnDb::TABLE_ANNOUNCES." WHERE uuid IN ($placeholders)";
         return $this->lpdo->execute($sql, $uuids);
@@ -98,7 +98,7 @@ class AnAnnouncesRepository extends IsAnRepository {
             appId:      $data['app_id'],
             title:      $data['title'],
             body:       $data['body'],
-            status:     AnAnnounceStatus::from((int)$data['status']),
+            status:     AnAnnounceStatus::from($data['status']),
             startAt:    $data['start_at'] ? new DateTimeImmutable($data['start_at']) : null,
             endAt:      $data['end_at'] ? new DateTimeImmutable($data['end_at']) : null,
             createdAt:  new DateTimeImmutable($data['created_at']),

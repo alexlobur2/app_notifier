@@ -31,9 +31,9 @@ class AnAnnouncesRepositoryOpts extends IsAnRepositoryOpts {
         $curDate = $this->prepareValue($this->curDate);
 
         $conditions = [
-            !empty($appsIds) ? 'app_id IN ('.implode($appsIds).')' : null,
-            !empty($statuses) ? 'status IN ('.implode($statuses).')' : null,
-            !empty($excludeUuids) ? 'uuid NOT IN ('.implode($excludeUuids).')' : null,
+            !empty($appsIds) ? 'app_id IN ('.implode(",",$appsIds).')' : null,
+            !empty($statuses) ? 'status IN ('.implode(",",$statuses).')' : null,
+            !empty($excludeUuids) ? 'uuid NOT IN ('.implode(",",$excludeUuids).')' : null,
             !is_null($curDate) ? 'start_at <= '.$curDate.' AND end_at >= '.$curDate : null,
         ];
         $conditions = array_filter($conditions, fn($item) => !is_null($item));

@@ -30,7 +30,7 @@ class AnAppsRepository extends IsAnRepository {
      *  @throws Exception
      */
     public function getByAppId(string $appId): ?AnApp {
-        $row = $this->lpdo->exec2val(
+        $row = $this->lpdo->exec2row(
             "SELECT * FROM ".AnDb::TABLE_APPS." WHERE app_id = :app_id LIMIT 1",
             [':app_id' => $appId]
         );
@@ -43,7 +43,7 @@ class AnAppsRepository extends IsAnRepository {
      *  @throws Exception
      */
     public function getByToken(string $token): ?AnApp {
-        $row = $this->lpdo->exec2val(
+        $row = $this->lpdo->exec2row(
             "SELECT * FROM ".AnDb::TABLE_APPS." WHERE token = :token LIMIT 1",
             [':token' => $token]
         );
@@ -55,20 +55,8 @@ class AnAppsRepository extends IsAnRepository {
      * Получение списка приложений
      * @throws Exception
      */
-    public function getList(?bool $enabled = null): array {
-
-        // построение запроса
-        $conditions = [];
-        if ($enabled !== null) $conditions[] = 'enabled = :enabled';
-        $whereClause = !empty($conditions) ? 'WHERE '.implode(' AND ', $conditions) : '';
-
-        $sql = "SELECT * FROM ".AnDb::TABLE_APPS." ".$whereClause;
-        $params = [
-            ':enabled' => is_null($enabled) ? null : ($enabled ? 1 : 0),
-        ];
-
-        // запрос к БД
-        $rows = $this->lpdo->exec2array($sql, $params);
+    public function getList(): array {
+        $rows = $this->lpdo->query2array("SELECT * FROM ".AnDb::TABLE_APPS);
         return array_map(fn($row) => $this->mapToAnApp($row), $rows);
     }
 

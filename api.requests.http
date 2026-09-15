@@ -5,12 +5,10 @@
 @baseUrl = https://services.locode.me/app_notifier/api/index.php
 @adminToken = TEST_ADMIN
 @appToken = TEST_APP
+@appTokenDisabled = TEST_APP_DISABLED
 
-### ============================================
-### ПУБЛИЧНЫЕ ДЕЙСТВИЯ API
-### ============================================
 
-### Get Announces - Получение списка активных анонсов
+### Public Announces - Получение списка активных анонсов
 # Возвращает только анонсы со статусом "live"
 POST {{baseUrl}}
 Content-Type: application/json
@@ -24,8 +22,7 @@ Content-Type: application/json
   }
 }
 
-
-### Get Announces - без параметров исключения
+### Public Announces - без параметров исключения
 POST {{baseUrl}}
 Content-Type: application/json
 
@@ -37,9 +34,19 @@ Content-Type: application/json
   }
 }
 
-### ============================================
-### АДМИН ДЕЙСТВИЯ - ANNOUNCES (АНОНСЫ)
-### ============================================
+### Public Announces - приложение выключено
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "action": "get_announces",
+  "token": "{{appTokenDisabled}}",
+  "data": {
+    "device_fpt": "my_device_fingerprint"
+  }
+}
+
+
 
 ### Adm Announces List - Список всех анонсов с пагинацией
 POST {{baseUrl}}
@@ -79,7 +86,7 @@ Content-Type: application/json
   "token": "{{adminToken}}",
   "data": {
     "announce": {
-      "app_id": "app123",
+      "app_id": "test.app",
       "title": "Заголовок анонса",
       "body": "Текст анонса",
       "status": "draft",
@@ -98,11 +105,13 @@ Content-Type: application/json
   "token": "{{adminToken}}",
   "data": {
     "announce": {
-      "uuid": "existing-uuid-here",
-      "app_id": "app123",
+      "uuid": "existing-uuid",
+      "app_id": "test.app",
       "title": "Обновленный заголовок",
-      "body": "Обновленный текст анонса",
-      "status": "live"
+      "body": "Текст анонса",
+      "status": "draft",
+      "start_at": 1735689600,
+      "end_at": 1738368000
     }
   }
 }
@@ -115,13 +124,11 @@ Content-Type: application/json
   "action": "adm.announces.delete",
   "token": "{{adminToken}}",
   "data": {
-    "uuids": ["uuid1", "uuid2", "uuid3"]
+    "uuids": ["existing-uuid", "uuid1", "uuid2"]
   }
 }
 
-### ============================================
-### АДМИН ДЕЙСТВИЯ - APPS (ПРИЛОЖЕНИЯ)
-### ============================================
+
 
 ### Adm Apps List - Получить список всех приложений
 POST {{baseUrl}}
@@ -173,13 +180,11 @@ Content-Type: application/json
   "action": "adm.apps.delete",
   "token": "{{adminToken}}",
   "data": {
-    "apps_ids": ["app1", "app2", "app3"]
+    "apps_ids": ["new_app_123", "app2", "app3"]
   }
 }
 
-### ============================================
-### АДМИН ДЕЙСТВИЯ - DEVICES (УСТРОЙСТВА)
-### ============================================
+
 
 ### Adm Devices List - Список устройств с пагинацией
 POST {{baseUrl}}
@@ -189,7 +194,7 @@ Content-Type: application/json
   "action": "adm.devices.list",
   "token": "{{adminToken}}",
   "data": {
-    "apps_ids": ["app1", "app2"],
+    "apps_ids": ["test.app", "app2"],
     "pagination": {
       "offset": 0,
       "limit": 100,
@@ -209,9 +214,6 @@ Content-Type: application/json
   "data": {}
 }
 
-### ============================================
-### ТЕСТОВЫЕ ЗАПРОСЫ С ОШИБКАМИ
-### ============================================
 
 ### Неверный токен (ошибка 401 Unauthorized)
 POST {{baseUrl}}

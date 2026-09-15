@@ -29,7 +29,12 @@ function exceptionHandler(?Throwable $err = null): void {
 
     // нет ошибок
     if(empty($err)) {
-        die( new AnApiResponse( false, $requestData, new AnApiException( AnApiException::API_UNHANDLED_EXCEPTION, "Unknown Error" ) ) );
+        die(
+            new AnApiResponse(
+                false, $requestData,
+                new AnApiException( AnApiException::API_UNHANDLED_EXCEPTION, "Unknown Error" )
+            )
+        );
     }
 
     // Если превышен лимит "POST Content-Length of XXX bytes exceeds the limit of XXX bytes"
@@ -42,7 +47,11 @@ function exceptionHandler(?Throwable $err = null): void {
         );
     }
     // прочая - неизвестная ошибка
-    die( new AnApiResponse( false, $requestData, new AnApiException( AnApiException::API_UNHANDLED_EXCEPTION ) ));
+    die(
+        new AnApiResponse(
+            false, $requestData, new AnApiException( AnApiException::API_UNHANDLED_EXCEPTION, $err->getMessage() )
+        )
+    );
 }
 
 

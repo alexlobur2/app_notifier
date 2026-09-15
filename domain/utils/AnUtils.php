@@ -12,8 +12,8 @@ class AnUtils {
     }
 
 
-    static function log(string $message, string $postfix): void {
-        $name = "app_notifier".$postfix;
+    static function log(string $message, string $postfix=''): void {
+        $name = "app_notifier/log".$postfix;
         SysUtils::log($name, $message);
     }
 

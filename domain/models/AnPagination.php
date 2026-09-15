@@ -21,7 +21,7 @@ class AnPagination {
             offset: $data['offset'] ?? null,
             limit:  $data['limit'] ?? null,
             order:  $data['order'] ?? null,
-            desc:   $data['desc'] ?? null,
+            desc:   $data['desc'] ?? false,
             total: $data['total'] ?? null,
         );
     }

@@ -54,7 +54,7 @@ class AnDevicesRepository extends IsAnRepository {
             ".$opts->limits();
 
         // Получение данных из БД
-        $rows = $this->lpdo->query2array( $sql );
+        $rows = $this->lpdo->query2array($sql);
 
         // Формируем результат
         return array_map( fn($row) => $this->mapToAnDevice($row), $rows );

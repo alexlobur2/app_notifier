@@ -40,7 +40,7 @@ abstract class IsAnResponseUC {
      *  @throws AnApiException
      */
     protected function assertData(string $name, string $type, bool $allowNull = false): mixed {
-        $value = $this->data[$name];
+        $value = $this->data[$name]??null;
         // Проверка на null
         if(is_null($value)){
             if($allowNull) return null;

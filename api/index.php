@@ -22,7 +22,7 @@ $result = match ($action){
     // devices
     "adm.devices.list" => new AdmGetDevicesResponseUC()->execute(),
     // ошибка
-    default => throw new AnApiException(AnApiException::API_BAD_REQUEST, "Unknown action:".$action)
+    default => throw new AnApiException(AnApiException::API_BAD_REQUEST, "Unknown action: ".$action)
 };
 die($result);
 
