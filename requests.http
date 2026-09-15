@@ -1,0 +1,292 @@
+### Переменные окружения
+# @no-check
+### env local
+local_host = localhost:8000
+local_token = your_admin_token_here
+
+### env dev
+dev_host = api.dev.example.com
+dev_token = your_dev_token_here
+
+### env prod
+prod_host = api.example.com
+prod_token = your_prod_token_here
+
+###############################################
+# ПУБЛИЧНЫЕ МЕТОДЫ
+###############################################
+
+### Получить список анонсов (публичный метод)
+# @name getAnnounces
+GET http://{{local_host}}/api/v1/get_announces
+Content-Type: application/json
+
+{
+  "app_id": "com.example.app",
+  "device_id": "device123",
+  "version": "1.0.0",
+  "platform": "ios"
+}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+###############################################
+# АДМИНСКИЕ МЕТОДЫ
+###############################################
+
+### Создать новый анонс
+# @name createAnnounce
+POST http://{{local_host}}/api/v1/admin/announces
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "app_id": "com.example.app",
+  "title": "Новогодняя акция",
+  "text": "Скидки до 50% на все товары!",
+  "link": "https://example.com/promo",
+  "image_url": "https://example.com/images/promo.jpg",
+  "start_date": "2024-12-01T00:00:00Z",
+  "end_date": "2024-12-31T23:59:59Z",
+  "status": "active",
+  "priority": 10,
+  "platforms": ["ios", "android"],
+  "min_version": "1.0.0",
+  "max_version": "2.0.0"
+}
+
+> {% client.test("Status code is 201", function() {
+    client.assert(response.status === 201, "Response status is not 201");
+  }); %}
+
+### Получить список всех анонсов с пагинацией
+# @name listAnnounces
+GET http://{{local_host}}/api/v1/admin/announces?page=1&per_page=20&status=active
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Получить анонс по ID
+# @name getAnnounceById
+GET http://{{local_host}}/api/v1/admin/announces/123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Обновить анонс (полное обновление)
+# @name updateAnnounce
+PUT http://{{local_host}}/api/v1/admin/announces/123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "app_id": "com.example.app",
+  "title": "Обновленная новогодняя акция",
+  "text": "Скидки до 70% на все товары!",
+  "link": "https://example.com/new-promo",
+  "image_url": "https://example.com/images/new-promo.jpg",
+  "start_date": "2024-12-01T00:00:00Z",
+  "end_date": "2024-12-31T23:59:59Z",
+  "status": "active",
+  "priority": 15,
+  "platforms": ["ios", "android", "web"],
+  "min_version": "1.0.0",
+  "max_version": "2.5.0"
+}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Частично обновить анонс
+# @name patchAnnounce
+PATCH http://{{local_host}}/api/v1/admin/announces/123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "priority": 20,
+  "status": "archived"
+}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Удалить анонс
+# @name deleteAnnounce
+DELETE http://{{local_host}}/api/v1/admin/announces/123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 204", function() {
+    client.assert(response.status === 204, "Response status is not 204");
+  }); %}
+
+###############################################
+# МЕТОДЫ ДЛЯ ПРИЛОЖЕНИЙ (APP)
+###############################################
+
+### Создать новое приложение
+# @name createApp
+POST http://{{local_host}}/api/v1/admin/apps
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "app_id": "com.example.newapp",
+  "name": "Новое приложение",
+  "description": "Описание нового приложения",
+  "platforms": ["ios", "android"],
+  "current_version": "1.0.0"
+}
+
+> {% client.test("Status code is 201", function() {
+    client.assert(response.status === 201, "Response status is not 201");
+  }); %}
+
+### Получить список всех приложений
+# @name listApps
+GET http://{{local_host}}/api/v1/admin/apps?page=1&per_page=20
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Получить приложение по ID
+# @name getAppById
+GET http://{{local_host}}/api/v1/admin/apps/com.example.app
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Обновить приложение
+# @name updateApp
+PUT http://{{local_host}}/api/v1/admin/apps/com.example.app
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "name": "Обновленное название приложения",
+  "description": "Обновленное описание",
+  "current_version": "1.1.0"
+}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Удалить приложение
+# @name deleteApp
+DELETE http://{{local_host}}/api/v1/admin/apps/com.example.app
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 204", function() {
+    client.assert(response.status === 204, "Response status is not 204");
+  }); %}
+
+###############################################
+# МЕТОДЫ ДЛЯ УСТРОЙСТВ (DEVICE)
+###############################################
+
+### Получить список всех устройств
+# @name listDevices
+GET http://{{local_host}}/api/v1/admin/devices?page=1&per_page=20&platform=ios
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Получить устройство по ID
+# @name getDeviceById
+GET http://{{local_host}}/api/v1/admin/devices/device123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
+
+### Удалить устройство
+# @name deleteDevice
+DELETE http://{{local_host}}/api/v1/admin/devices/device123
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 204", function() {
+    client.assert(response.status === 204, "Response status is not 204");
+  }); %}
+
+###############################################
+# ПРИМЕРЫ С АВТОМАТИЧЕСКИМИ ТЕСТАМИ
+###############################################
+
+### Пример с проверкой наличия поля в ответе
+GET http://{{local_host}}/api/v1/get_announces
+Content-Type: application/json
+
+{
+  "app_id": "com.example.app",
+  "device_id": "device123",
+  "version": "1.0.0",
+  "platform": "ios"
+}
+
+> {% 
+    client.test("Response has announces array", function() {
+      client.assert(response.body.announces !== undefined, "Response should have 'announces' field");
+      client.assert(Array.isArray(response.body.announces), "'announces' should be an array");
+    });
+    
+    client.test("Status code is 200", function() {
+      client.assert(response.status === 200, "Response status is not 200");
+    });
+  %}
+
+### Пример с извлечением токена из ответа и использованием в следующем запросе
+# Этот пример показывает, как сохранить значение из ответа для использования в последующих запросах
+POST http://{{local_host}}/api/v1/admin/announces
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+{
+  "app_id": "com.example.app",
+  "title": "Тестовый анонс",
+  "text": "Текст тестового анонса",
+  "status": "active",
+  "priority": 5,
+  "platforms": ["ios"]
+}
+
+> {% 
+    // Сохраняем ID созданного анонса для последующего использования
+    if (response.body.announce && response.body.announce.id) {
+      client.global.set("created_announce_id", response.body.announce.id);
+      console.log("Created announce ID: " + response.body.announce.id);
+    }
+  %}
+
+### Использование сохраненного ID для получения анонса
+GET http://{{local_host}}/api/v1/admin/announces/{{created_announce_id}}
+Content-Type: application/json
+X-Auth-Token: {{local_token}}
+
+> {% client.test("Status code is 200", function() {
+    client.assert(response.status === 200, "Response status is not 200");
+  }); %}
