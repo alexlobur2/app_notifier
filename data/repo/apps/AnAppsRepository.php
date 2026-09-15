@@ -32,7 +32,7 @@ class AnAppsRepository extends IsAnRepository {
     public function getByAppId(string $appId): ?AnApp {
         $row = $this->lpdo->exec2val(
             "SELECT * FROM ".AnDb::TABLE_APPS." WHERE app_id = :app_id LIMIT 1",
-            [':token' => $appId]
+            [':app_id' => $appId]
         );
         return !$row ? null : $this->mapToAnApp($row);
     }
@@ -79,7 +79,7 @@ class AnAppsRepository extends IsAnRepository {
      */
     public function deleteByIds(array $appIds): int {
         $placeholders = implode(',', array_fill(0, count($appIds), '?'));
-        $sql = "DELETE FROM ".AnDb::TABLE_APPS." WHERE uuid IN ($placeholders)";
+        $sql = "DELETE FROM ".AnDb::TABLE_APPS." WHERE app_id IN ($placeholders)";
         return $this->lpdo->execute($sql, $appIds);
     }
 
