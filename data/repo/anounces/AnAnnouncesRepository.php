@@ -81,11 +81,10 @@ class AnAnnouncesRepository extends IsAnRepository {
      *  Удаление объявлений по UUID
      *  @throws Exception
      */
-    public function deleteByUuids(array $uuids): int {
-        $sqlUuids = array_map( fn($uuid) => $this->lpdo->quote($uuid), $uuids);
-        return $this->lpdo->queryExt(
-            "DELETE FROM ".AnDb::TABLE_ANNOUNCES." WHERE uuid IN (".implode(",", $sqlUuids).")",
-        );
+    public function deleteByIds(array $uuids): int {
+        $placeholders = implode(',', array_fill(0, count($uuids), '?'));
+        $sql = "DELETE FROM ".AnDb::TABLE_ANNOUNCES." WHERE uuid IN ($placeholders)";
+        return $this->lpdo->execute($sql, $uuids);
     }
 
 

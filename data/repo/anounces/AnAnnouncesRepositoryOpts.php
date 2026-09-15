@@ -34,7 +34,7 @@ class AnAnnouncesRepositoryOpts extends IsAnRepositoryOpts {
             !empty($appsIds) ? 'app_id IN ('.implode($appsIds).')' : null,
             !empty($statuses) ? 'status IN ('.implode($statuses).')' : null,
             !empty($excludeUuids) ? 'uuid NOT IN ('.implode($excludeUuids).')' : null,
-            !is_null($curDate) ? 'start_at >= '.$curDate.' AND end_at <= '.$curDate : null,
+            !is_null($curDate) ? 'start_at <= '.$curDate.' AND end_at >= '.$curDate : null,
         ];
         $conditions = array_filter($conditions, fn($item) => !is_null($item));
         return !empty($conditions) ? $prefix.' '.implode(' AND ', $conditions) : '';

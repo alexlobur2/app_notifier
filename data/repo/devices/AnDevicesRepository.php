@@ -67,7 +67,7 @@ class AnDevicesRepository extends IsAnRepository {
      */
     public function count(AnDevicesRepositoryOpts $opts): int {
         return (int) $this->lpdo->query2val(
-            "SELECT CONT(*) FROM ".AnDb::TABLE_DEVICES." ".$opts->where("WHERE")
+            "SELECT COUNT(*) FROM ".AnDb::TABLE_DEVICES." ".$opts->where("WHERE")
         );
     }
 

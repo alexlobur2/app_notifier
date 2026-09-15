@@ -74,14 +74,13 @@ class AnAppsRepository extends IsAnRepository {
 
 
     /**
-     *  Удаление объявлений по UUID
+     *  Удаление приложений по appId
      *  @throws Exception
      */
-    public function deleteByIds(array $ids): int {
-        $sqlIds = array_map( fn($id) => $this->lpdo->quote($id), $ids);
-        return $this->lpdo->queryExt(
-            "DELETE FROM ".AnDb::TABLE_APPS." WHERE uuid IN (".implode(",", $sqlIds).")",
-        );
+    public function deleteByIds(array $appIds): int {
+        $placeholders = implode(',', array_fill(0, count($appIds), '?'));
+        $sql = "DELETE FROM ".AnDb::TABLE_APPS." WHERE uuid IN ($placeholders)";
+        return $this->lpdo->execute($sql, $appIds);
     }
 
 

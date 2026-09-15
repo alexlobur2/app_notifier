@@ -31,11 +31,16 @@ readonly class AnApiRequest {
         // получение входных данных
         $input = file_get_contents('php://input');
 
+        // Проверка JSON
+        $json = json_decode($input, true);
+        if (json_last_error() !== JSON_ERROR_NONE){
+            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Invalid JSON");
+        }
+
         // Проверка обязательных параметров
-        $json = self::throwOnEmpty(json_decode($input, true), "JSON");
         $this->action = self::throwOnEmpty($json['action'], "action");
         $this->token = self::throwOnEmpty($json['token'], "token");
-        $this->data = $json['data'];
+        $this->data = $json['data']??null;
     }
 
 
