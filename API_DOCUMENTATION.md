@@ -1,43 +1,43 @@
-# API Documentation
+# Документация по API
 
-## Overview
+## Обзор
 
-This document describes the API for the Announce (An) system. The API follows a JSON-RPC-like pattern where all requests are sent via POST with JSON body.
+Этот документ описывает API системы Announce (An). API следует шаблону, подобному JSON-RPC, где все запросы отправляются методом POST с JSON-телом.
 
-## Base Information
+## Основная информация
 
 - **Endpoint**: `/api/index.php`
-- **Method**: POST
+- **Метод**: POST
 - **Content-Type**: `application/json`
-- **Authentication**: Required via `token` field in request body
+- **Аутентификация**: Требуется через поле `token` в теле запроса
 
 ---
 
-## Request Format
+## Формат запроса
 
-All requests must be sent as JSON with the following structure:
+Все запросы должны отправляться в формате JSON со следующей структурой:
 
 ```json
 {
-    "action": "<string>",      // Required: Action name to execute
-    "token": "<string>",       // Required: Access token for authentication
-    "data": {}                 // Optional: Action-specific data object
+    "action": "<string>",      // Обязательно: Имя действия для выполнения
+    "token": "<string>",       // Обязательно: Токен доступа для аутентификации
+    "data": {}                 // Опционально: Объект с параметрами действия
 }
 ```
 
-### Request Parameters
+### Параметры запроса
 
-| Parameter | Type   | Required | Description                          |
-|-----------|--------|----------|--------------------------------------|
-| action    | string | Yes      | The action to execute                |
-| token     | string | Yes      | Application access token             |
-| data      | object | No       | Action-specific parameters           |
+| Параметр | Тип    | Обязательный | Описание                           |
+|----------|--------|--------------|------------------------------------|
+| action   | string | Да         | Действие для выполнения            |
+| token    | string | Да         | Токен доступа приложения           |
+| data     | object | Нет        | Параметры, специфичные для действия |
 
 ---
 
-## Response Format
+## Формат ответа
 
-All responses follow a standard structure:
+Все ответы следуют стандартной структуре:
 
 ```json
 {
@@ -52,59 +52,59 @@ All responses follow a standard structure:
 }
 ```
 
-### Response Fields
+### Поля ответа
 
-| Field   | Type    | Description                              |
-|---------|---------|------------------------------------------|
-| success | boolean | Indicates if the request was successful  |
-| data    | object  | Response data (structure varies by action) |
-| error   | object  | Error details (null if success is true)  |
-
----
-
-## Authentication
-
-Authentication is performed via the `token` field in the request body. The token must be valid and associated with an active application.
-
-### Special Tokens
-
-- **Admin Token**: Applications with `app_id` matching `ADMIN_APP_ID` configuration have admin privileges and can access `adm.*` actions.
+| Поле    | Тип     | Описание                                   |
+|---------|---------|--------------------------------------------|
+| success | boolean | Указывает, был ли запрос успешным          |
+| data    | object  | Данные ответа (структура зависит от действия) |
+| error   | object  | Детали ошибки (null если success равен true) |
 
 ---
 
-## Error Codes
+## Аутентификация
 
-| Error Code          | HTTP Code | Description                    |
-|---------------------|-----------|--------------------------------|
-| API_BAD_REQUEST     | 400       | Invalid request format         |
-| API_UNAUTHORIZED    | 401       | Invalid or missing token       |
-| API_FORBIDDEN       | 403       | Insufficient permissions       |
-| API_UNKNOWN_ACTION  | 400       | Unknown action name            |
-| UNHANDLED_EXCEPTION | 500       | Internal server error          |
+Аутентификация выполняется через поле `token` в теле запроса. Токен должен быть действительным и связан с активным приложением.
+
+### Специальные токены
+
+- **Админ-токен**: Приложения с `app_id`, совпадающим с конфигурацией `ADMIN_APP_ID`, имеют права администратора и могут выполнять действия `adm.*`.
 
 ---
 
-## API Actions
+## Коды ошибок
 
-### Public Actions
+| Код ошибки          | HTTP код | Описание                           |
+|---------------------|----------|------------------------------------|
+| API_BAD_REQUEST     | 400      | Неверный формат запроса            |
+| API_UNAUTHORIZED    | 401      | Неверный или отсутствующий токен   |
+| API_FORBIDDEN       | 403      | Недостаточно прав                  |
+| API_UNKNOWN_ACTION  | 400      | Неизвестное имя действия           |
+| UNHANDLED_EXCEPTION | 500      | Внутренняя ошибка сервера          |
+
+---
+
+## Действия API
+
+### Публичные действия
 
 #### `get_announces`
 
-Get list of active announces for the current application.
+Получение списка активных анонсов для текущего приложения.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "get_announces",
     "token": "your_app_token",
     "data": {
-        "exclude_uuids": ["uuid1", "uuid2"],  // Optional: UUIDs to exclude
-        "device_fpt": "device_fingerprint"     // Optional: Device fingerprint
+        "exclude_uuids": ["uuid1", "uuid2"],  // Опционально: UUID для исключения
+        "device_fpt": "device_fingerprint"     // Опционально: Отпечаток устройства
     }
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -113,8 +113,8 @@ Get list of active announces for the current application.
             {
                 "app_id": "app123",
                 "uuid": "announce-uuid",
-                "title": "Announce Title",
-                "body": "Announce body text",
+                "title": "Заголовок анонса",
+                "body": "Текст анонса",
                 "status": "live",
                 "start_at": 1234567890,
                 "end_at": 1234567890,
@@ -126,31 +126,31 @@ Get list of active announces for the current application.
 }
 ```
 
-**Notes:**
-- Only returns announces with status `live`
-- Automatically updates device information if `device_fpt` is provided
-- Filters by current application's `app_id`
+**Примечания:**
+- Возвращает только анонсы со статусом `live`
+- Автоматически обновляет информацию об устройстве, если предоставлен `device_fpt`
+- Фильтрует по `app_id` текущего приложения
 
 ---
 
-### Admin Actions
+### Действия администратора
 
-Admin actions require admin privileges (token from admin application).
+Действия администратора требуют прав администратора (токен от админ-приложения).
 
-#### Announces Management
+#### Управление анонсами
 
 ##### `adm.announces.list`
 
-Get paginated list of announces with filtering options.
+Получение постраничного списка анонсов с возможностями фильтрации.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.announces.list",
     "token": "admin_token",
     "data": {
-        "apps_ids": ["app1", "app2"],           // Optional: Filter by app IDs
-        "statuses": ["draft", "live", "archived"], // Optional: Filter by statuses
+        "apps_ids": ["app1", "app2"],           // Опционально: Фильтр по ID приложений
+        "statuses": ["draft", "live", "archived"], // Опционально: Фильтр по статусам
         "pagination": {
             "offset": 0,
             "limit": 100,
@@ -161,7 +161,7 @@ Get paginated list of announces with filtering options.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -180,30 +180,30 @@ Get paginated list of announces with filtering options.
 
 ##### `adm.announces.upsert`
 
-Create or update an announce.
+Создание или обновление анонса.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.announces.upsert",
     "token": "admin_token",
     "data": {
         "announce": {
-            "uuid": "optional-uuid",           // Optional: If not provided, will be generated
+            "uuid": "optional-uuid",           // Опционально: Если не указано, будет сгенерирован
             "app_id": "app123",
-            "title": "Announce Title",
-            "body": "Announce body text",
-            "status": "draft",                  // "draft", "live", or "archived"
-            "start_at": 1234567890,            // Optional: Start timestamp
-            "end_at": 1234567890,              // Optional: End timestamp
-            "created_at": 1234567890,          // Auto-generated if not provided
-            "updated_at": 1234567890           // Auto-generated if not provided
+            "title": "Заголовок анонса",
+            "body": "Текст анонса",
+            "status": "draft",                  // "draft", "live" или "archived"
+            "start_at": 1234567890,            // Опционально: Временная метка начала
+            "end_at": 1234567890,              // Опционально: Временная метка окончания
+            "created_at": 1234567890,          // Генерируется автоматически, если не указано
+            "updated_at": 1234567890           // Генерируется автоматически, если не указано
         }
     }
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -211,8 +211,8 @@ Create or update an announce.
         "announce": {
             "app_id": "app123",
             "uuid": "generated-or-provided-uuid",
-            "title": "Announce Title",
-            "body": "Announce body text",
+            "title": "Заголовок анонса",
+            "body": "Текст анонса",
             "status": "draft",
             "start_at": 1234567890,
             "end_at": 1234567890,
@@ -225,9 +225,9 @@ Create or update an announce.
 
 ##### `adm.announces.delete`
 
-Delete one or more announces by UUID.
+Удаление одного или нескольких анонсов по UUID.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.announces.delete",
@@ -238,7 +238,7 @@ Delete one or more announces by UUID.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -250,13 +250,13 @@ Delete one or more announces by UUID.
 
 ---
 
-#### Apps Management
+#### Управление приложениями
 
 ##### `adm.apps.list`
 
-Get list of all applications.
+Получение списка всех приложений.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.apps.list",
@@ -265,7 +265,7 @@ Get list of all applications.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -285,9 +285,9 @@ Get list of all applications.
 
 ##### `adm.apps.upsert`
 
-Create or update an application.
+Создание или обновление приложения.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.apps.upsert",
@@ -304,7 +304,7 @@ Create or update an application.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -322,9 +322,9 @@ Create or update an application.
 
 ##### `adm.apps.delete`
 
-Delete one or more applications by ID.
+Удаление одного или нескольких приложений по ID.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.apps.delete",
@@ -335,7 +335,7 @@ Delete one or more applications by ID.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -347,19 +347,19 @@ Delete one or more applications by ID.
 
 ---
 
-#### Devices Management
+#### Управление устройствами
 
 ##### `adm.devices.list`
 
-Get paginated list of devices with filtering options.
+Получение постраничного списка устройств с возможностями фильтрации.
 
-**Request:**
+**Запрос:**
 ```json
 {
     "action": "adm.devices.list",
     "token": "admin_token",
     "data": {
-        "apps_ids": ["app1", "app2"],          // Optional: Filter by app IDs
+        "apps_ids": ["app1", "app2"],          // Опционально: Фильтр по ID приложений
         "pagination": {
             "offset": 0,
             "limit": 100,
@@ -370,7 +370,7 @@ Get paginated list of devices with filtering options.
 }
 ```
 
-**Response:**
+**Ответ:**
 ```json
 {
     "success": true,
@@ -397,67 +397,67 @@ Get paginated list of devices with filtering options.
 
 ---
 
-## Data Models
+## Модели данных
 
-### Announce Object
+### Объект Announce (Анонс)
 
-| Field      | Type    | Description                           |
-|------------|---------|---------------------------------------|
-| uuid       | string  | Unique identifier                     |
-| app_id     | string  | Associated application ID             |
-| title      | string  | Announce title                        |
-| body       | string  | Announce body text                    |
-| status     | string  | Status: `draft`, `live`, `archived`   |
-| start_at   | int     | Start timestamp (Unix epoch)          |
-| end_at     | int     | End timestamp (Unix epoch)            |
-| created_at | int     | Creation timestamp (Unix epoch)       |
-| updated_at | int     | Last update timestamp (Unix epoch)    |
+| Поле       | Тип     | Описание                                |
+|------------|---------|-----------------------------------------|
+| uuid       | string  | Уникальный идентификатор                |
+| app_id     | string  | ID связанного приложения                |
+| title      | string  | Заголовок анонса                        |
+| body       | string  | Текст анонса                            |
+| status     | string  | Статус: `draft`, `live`, `archived`     |
+| start_at   | int     | Временная метка начала (Unix epoch)     |
+| end_at     | int     | Временная метка окончания (Unix epoch)  |
+| created_at | int     | Временная метка создания (Unix epoch)   |
+| updated_at | int     | Временная метка обновления (Unix epoch) |
 
-### App Object
+### Объект App (Приложение)
 
-| Field      | Type    | Description                      |
-|------------|---------|----------------------------------|
-| app_id     | string  | Application unique identifier    |
-| token      | string  | Access token for authentication  |
-| enabled    | boolean | Application active status        |
-| created_at | int     | Creation timestamp (Unix epoch)  |
-| updated_at | int     | Last update timestamp (Unix epoch) |
+| Поле       | Тип     | Описание                             |
+|------------|---------|--------------------------------------|
+| app_id     | string  | Уникальный идентификатор приложения  |
+| token      | string  | Токен доступа для аутентификации     |
+| enabled    | boolean | Статус активности приложения         |
+| created_at | int     | Временная метка создания (Unix epoch)|
+| updated_at | int     | Временная метка обновления (Unix epoch) |
 
-### Device Object
+### Объект Device (Устройство)
 
-| Field         | Type   | Description                          |
-|---------------|--------|--------------------------------------|
-| app_id        | string | Associated application ID            |
-| device_fpt    | string | Device fingerprint hash              |
-| first_seen_at | int    | First seen timestamp (Unix epoch)    |
-| last_seen_at  | int    | Last seen timestamp (Unix epoch)     |
-| request_count | int    | Total number of requests             |
+| Поле          | Тип     | Описание                                   |
+|---------------|---------|--------------------------------------------|
+| app_id        | string  | ID связанного приложения                   |
+| device_fpt    | string  | Хеш отпечатка устройства                   |
+| first_seen_at | int     | Временная метка первого появления (Unix epoch) |
+| last_seen_at  | int     | Временная метка последнего появления (Unix epoch) |
+| request_count | int     | Общее количество запросов                  |
 
-### Pagination Object
+### Объект Pagination (Пагинация)
 
-| Field  | Type    | Description                    |
-|--------|---------|--------------------------------|
-| offset | int     | Number of items to skip        |
-| limit  | int     | Maximum number of items        |
-| order  | string  | Field to sort by               |
-| desc   | boolean | Sort in descending order       |
-| total  | int     | Total number of items (in responses) |
-
----
-
-## Announce Statuses
-
-| Status   | Value     | Description                    |
-|----------|-----------|--------------------------------|
-| Draft    | `draft`   | Not yet published              |
-| Live     | `live`    | Currently active/visible       |
-| Archived | `archived`| No longer active               |
+| Поле   | Тип     | Описание                           |
+|--------|---------|------------------------------------|
+| offset | int     | Количество пропускаемых элементов  |
+| limit  | int     | Максимальное количество элементов  |
+| order  | string  | Поле для сортировки                |
+| desc   | boolean | Сортировка по убыванию             |
+| total  | int     | Общее количество элементов (в ответах) |
 
 ---
 
-## Usage Examples
+## Статусы анонсов
 
-### Example 1: Get Active Announces (Client App)
+| Статус   | Значение    | Описание                           |
+|----------|-------------|------------------------------------|
+| Draft    | `draft`     | Еще не опубликован                 |
+| Live     | `live`      | В настоящее время активен/видим    |
+| Archived | `archived`  | Больше не активен                  |
+
+---
+
+## Примеры использования
+
+### Пример 1: Получение активных анонсов (клиентское приложение)
 
 ```bash
 curl -X POST https://example.com/api/index.php \
@@ -471,7 +471,7 @@ curl -X POST https://example.com/api/index.php \
   }'
 ```
 
-### Example 2: Create New Announce (Admin)
+### Пример 2: Создание нового анонса (администратор)
 
 ```bash
 curl -X POST https://example.com/api/index.php \
@@ -482,15 +482,15 @@ curl -X POST https://example.com/api/index.php \
     "data": {
       "announce": {
         "app_id": "my_app",
-        "title": "New Feature Release",
-        "body": "We released a new feature!",
+        "title": "Выход новой функции",
+        "body": "Мы выпустили новую функцию!",
         "status": "live"
       }
     }
   }'
 ```
 
-### Example 3: Get Devices List (Admin)
+### Пример 3: Получение списка устройств (администратор)
 
 ```bash
 curl -X POST https://example.com/api/index.php \
@@ -512,10 +512,10 @@ curl -X POST https://example.com/api/index.php \
 
 ---
 
-## Notes
+## Примечания
 
-1. All timestamps are returned as Unix epoch integers (seconds since January 1, 1970)
-2. UUIDs are automatically generated if not provided during announce creation
-3. Device fingerprints are tracked automatically when calling `get_announces` with `device_fpt`
-4. Admin actions require special admin token configured in `AnConfig::ADMIN_APP_ID`
-5. All string comparisons for tokens use timing-safe comparison (`hash_equals`)
+1. Все временные метки возвращаются как целые числа Unix epoch (секунды с 1 января 1970 года)
+2. UUID автоматически генерируются, если не указаны при создании анонса
+3. Отпечатки устройств отслеживаются автоматически при вызове `get_announces` с параметром `device_fpt`
+4. Действия администратора требуют специального админ-токена, настроенного в `AnConfig::ADMIN_APP_ID`
+5. Все сравнения строк для токенов используют безопасное по времени сравнение (`hash_equals`)
