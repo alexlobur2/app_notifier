@@ -26,10 +26,10 @@ final readonly class AnAnnounce extends IsAnEntity{
             $data['title'],
             $data['body'],
             AnAnnounceStatus::from($data['status']),
-            !array_key_exists('start_at',$data) ? null : DateTimeImmutable::createFromTimestamp($data['start_at']),
-            !array_key_exists('end_at',$data) ? null : DateTimeImmutable::createFromTimestamp($data['end_at']),
-            !array_key_exists('created_at',$data) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['start_at']),
-            !array_key_exists('updated_at',$data) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['end_at']),
+            is_null($data['start_at']??null) ? null : DateTimeImmutable::createFromTimestamp($data['start_at']),
+            is_null($data['end_at']??null) ? null : DateTimeImmutable::createFromTimestamp($data['end_at']),
+            is_null($data['created_at']??null) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['created_at']),
+            is_null($data['updated_at']??null) ? new DateTimeImmutable() : DateTimeImmutable::createFromTimestamp($data['updated_at']),
         );
     }
 
@@ -44,8 +44,8 @@ final readonly class AnAnnounce extends IsAnEntity{
             "title"          => $this->title,
             "body"           => $this->body,
             "status"         => $this->status->value,
-            "start_at"       => $this->startAt->getTimestamp(),
-            "end_at"         => $this->endAt->getTimestamp(),
+            "start_at"       => $this->startAt?->getTimestamp(),
+            "end_at"         => $this->endAt?->getTimestamp(),
             "created_at"     => $this->createdAt->getTimestamp(),
             "updated_at"     => $this->updatedAt->getTimestamp(),
         ];

@@ -3,7 +3,7 @@
 ### Все запросы отправляются методом POST с Content-Type: application/json
 
 @baseUrl = https://services.locode.me/app_notifier/api/index.php
-@adminToken = TEST_ADMIN
+@adminToken = K2OpT6ImyWuZtRKzQKCcTFCLPfjA663Q
 @appToken = TEST_APP
 @appTokenDisabled = TEST_APP_DISABLED
 
@@ -86,9 +86,9 @@ Content-Type: application/json
   "token": "{{adminToken}}",
   "data": {
     "announce": {
-      "app_id": "test.app",
-      "title": "Заголовок анонса",
-      "body": "Текст анонса",
+      "app_id": "test.app.disabled",
+      "title": "Заголовок",
+      "body": "Контент сообщения...",
       "status": "draft",
       "start_at": 1735689600,
       "end_at": 1738368000

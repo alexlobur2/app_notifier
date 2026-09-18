@@ -64,7 +64,7 @@ class AdmUpsertAnnounceResponseUC extends IsAdmAnResponseUC {
      *  @throws Exception
      */
     private function ensureUuid(?string $uuid): string {
-        if(!is_null($uuid)) return $uuid;
+        if(!empty(trim($uuid))) return $uuid;
         // генерация uuid с проверкой на наличие записи с таким UUID
         do{
             $uuid = CodeGenerator::generateUUID(16);

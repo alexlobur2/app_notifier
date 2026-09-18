@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // отключение вывода ошибок
 
 require_once("exception_handler.php");
+require_once("no-cors.php");
 require_once(__DIR__."/../domain/utils/AnUtils.php");
 require_once(__DIR__."/../../../../libs/autoloader/AutoLoader.php");
 

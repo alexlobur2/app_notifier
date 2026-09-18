@@ -8,11 +8,11 @@ declare(strict_types=1);
 class AnPagination {
 
     public function __construct(
-        public ?int $offset,
-        public ?int $limit,
-        public ?string $order,
+        public ?int $offset = null,
+        public ?int $limit = null,
+        public ?string $order = null,
         public bool $desc = false,
-        public ?int $total,
+        public ?int $total = null,
     ){}
 
     static function fromArray(?array $data): self {
@@ -22,7 +22,7 @@ class AnPagination {
             limit:  $data['limit'] ?? null,
             order:  $data['order'] ?? null,
             desc:   $data['desc'] ?? false,
-            total: $data['total'] ?? null,
+            total:  $data['total'] ?? null,
         );
     }
 

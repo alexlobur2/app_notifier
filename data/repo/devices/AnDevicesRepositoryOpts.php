@@ -9,8 +9,8 @@ class AnDevicesRepositoryOpts extends IsAnRepositoryOpts {
     public function __construct(
         // список приложений
         public array $appsIds = [],
-        ?int $limit,
-        ?int $offset,
+        ?int $limit = null,
+        ?int $offset = null,
         public ?string $order = null,
         public bool $desc = false,
     ){

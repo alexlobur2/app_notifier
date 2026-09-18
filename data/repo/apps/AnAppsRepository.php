@@ -5,24 +5,48 @@
  */
 class AnAppsRepository extends IsAnRepository {
 
+
     /**
-     *  Вставка или обновление приложения
+     *  Обновление приложения
      *  @throws Exception
      */
-    public function upsert(string $appId, string $token, bool $enabled): void {
+    public function update(array $fields, string $appId): void {
+
+        // берем только допустимые ключи
+        $setKeys = array_intersect(['app_id', 'token', 'enabled'], array_keys($fields));
+        $setSql = implode(",\n", array_map( fn($key) => "$key = :$key", $setKeys ));
+
+        $sql = "UPDATE ".AnDb::TABLE_APPS."
+            SET
+                $setSql,
+                updated_at = NOW()
+            WHERE
+                app_id = :old_app_id
+        ";
+        $this->lpdo->execute($sql, [
+            ':app_id'   => $fields["app_id"]??null,
+            ':token'    => $fields["token"]??null,
+            ':enabled'  => $fields["enabled"]??null ? 1 : 0,
+            ':old_app_id' => $appId
+        ]);
+    }
+
+
+    /**
+     *  Вставка приложения
+     *  @throws Exception
+     */
+    public function insert(string $appId, string $token, bool $enabled): void {
         $sql = "INSERT INTO ".AnDb::TABLE_APPS." 
             (app_id, token, enabled, created_at, updated_at)
-            VALUES (:app_id, :token, :enabled, NOW(), NOW())
-            ON DUPLICATE KEY UPDATE
-                token = VALUES(token),
-                enabled = VALUES(enabled),
-                updated_at = NOW()";
+            VALUES (:app_id, :token, :enabled, NOW(), NOW())";
         $this->lpdo->execute($sql, [
             ':app_id'   => $appId,
             ':token'    => $token,
             ':enabled'  => $enabled ? 1 : 0,
         ]);
     }
+
 
 
     /**

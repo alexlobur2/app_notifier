@@ -20,10 +20,10 @@ class AnUtils {
 
     /**
      *  Выдает дату в виде ISO строки
-     * @param DateTimeInterface|null $date
-     * @return string
+     *  @param DateTimeInterface|null $date
+     *  @return ?string
      */
-    static function date2Iso(?DateTimeInterface $date): string {
+    static function date2Iso(?DateTimeInterface $date): ?string {
         return $date?->format('Y-m-d H:i:s');
     }
 

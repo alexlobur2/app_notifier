@@ -17,7 +17,7 @@
  * }
  * ```
  */
-class AdmUpsertAppResponseUC extends IsAdmAnResponseUC {
+class AdmAppInsertResponseUC extends IsAdmAnResponseUC {
     private AnAppsRepository $repo;
 
     public function __construct() {
@@ -40,8 +40,8 @@ class AdmUpsertAppResponseUC extends IsAdmAnResponseUC {
             throw new AnApiException(AnApiException::API_BAD_REQUEST, $e->getMessage());
         }
 
-        // Обновление данных
-        $this->repo->upsert(
+        // Добавление данных
+        $this->repo->insert(
             appId:   $app->appId,
             token:   $app->token,
             enabled: $app->enabled,

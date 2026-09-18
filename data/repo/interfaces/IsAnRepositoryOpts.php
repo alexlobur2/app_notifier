@@ -42,8 +42,9 @@ abstract class IsAnRepositoryOpts {
      *  Сортировка
      */
     public function orderBy(): string {
-        if (is_null($this->order)) return "";
-        return "ORDER BY ".$this->prepareValue($this->order).( $this->desc ? " DESC" : "" );
+        if (empty($this->order)) return "";
+        $order = str_replace("`", "", $this->order); // убираем спец символ - типа защита
+        return "ORDER BY `".$order."`".( $this->desc ? " DESC" : "" );
     }
 
 

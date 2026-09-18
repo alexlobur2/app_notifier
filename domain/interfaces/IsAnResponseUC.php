@@ -41,10 +41,28 @@ abstract class IsAnResponseUC {
      */
     protected function assertData(string $name, string $type, bool $allowNull = false): mixed {
         $value = $this->data[$name]??null;
+        try{
+            return $this->assertValue($value, $type, $allowNull);
+        } catch (Exception $e){
+            throw new AnApiException(AnApiException::API_BAD_REQUEST, "data[$name] assert exception: ".$e->getMessage() );
+        }
+    }
+
+
+    /**
+     *  Получение значения из data
+     *
+     *  @param mixed $value
+     *  @param "string"|"num" $type
+     *  @param bool $allowNull
+     *  @return mixed
+     *  @throws AnApiException
+     */
+    protected function assertValue(mixed $value, string $type, bool $allowNull = false): mixed {
         // Проверка на null
         if(is_null($value)){
             if($allowNull) return null;
-            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Null or Empty parameter: <$type> $name");
+            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Null or Empty parameter: <$type>");
         }
         // Проверка типов
         $type = trim(strtolower($type));
@@ -56,9 +74,10 @@ abstract class IsAnResponseUC {
             ($type == "array" and !is_array($value)) ||
             ($type == "announce_status" and AnAnnounceStatus::tryFrom($value)==null)
         ){
-            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Wrong parameter: <$type> $name = $value");
+            throw new AnApiException(AnApiException::API_BAD_REQUEST, "Wrong parameter: <$type> = $value");
         }
         return $value;
     }
+
 
 }
